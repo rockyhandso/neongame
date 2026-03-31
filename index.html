@@ -3,253 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Dash - Top Analytics Edition</title>
+    <title>Neon Dash - Optimized Layout</title>
     <style>
-        body {
-            margin: 0;
-            background: #0a0a0a;
-            color: white;
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            touch-action: manipulation;
-        }
-
-        /* Ad Container Style */
-        .ad-slot {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 320px;
-            height: 50px;
-            background: #111; /* Placeholder color */
-        }
-
-        #game-container {
-            position: relative;
-            border: 4px solid #fff200;
-            background: #000;
-            width: 800px;
-            max-width: 95vw;
-        }
+        body { margin: 0; background: #0a0a0a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        #top-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 20px;
-            box-sizing: border-box;
-            z-index: 10;
-            background: rgba(0,0,0,0.3);
+        /* AD SLOTS */
+        .ad-slot { margin: 15px 0; width: 468px; max-width: 95vw; height: 60px; background: #111; border: 1px solid #333; display: flex; justify-content: center; align-items: center; }
+
+        /* REWARD SYSTEM BOX */
+        #status-box {
+            width: 360px; max-width: 90vw; background: #1a1a1a; border: 2px solid #333; padding: 12px;
+            margin: 10px 0; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
+        #reward-btn {
+            background: #00ffcc; color: #000; border: none; padding: 15px;
+            font-weight: bold; font-size: 16px; cursor: pointer; border-radius: 10px; width: 360px; max-width: 90vw;
+            transition: 0.3s; box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+        .resume-mode { background: #ffcc00 !important; color: #000 !important; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
-        #score { font-size: 24px; color: #fff200; font-weight: bold; }
-        #analysis-report { font-size: 18px; color: #00ffcc; border: 1px solid #00ffcc; padding: 2px 10px; border-radius: 5px; }
-
-        canvas { display: block; width: 100%; }
+        /* GAME AREA */
+        #game-container { position: relative; border: 4px solid #fff200; width: 800px; max-width: 95vw; background: #000; border-radius: 8px; overflow: hidden; }
+        #top-bar { position: absolute; top: 0; width: 100%; display: flex; justify-content: space-between; padding: 10px 20px; box-sizing: border-box; z-index: 10; background: rgba(0,0,0,0.6); }
+        canvas { display: block; width: 100% ; background: #000; }
         
-        #controls {
-            margin-top: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        .jump-btn {
-            width: 150px;
-            height: 70px;
-            background: #fff200;
-            color: black;
-            border: none;
-            border-radius: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 242, 0, 0.4);
-        }
-
-        #overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 20;
-            text-align: center;
-        }
+        /* OVERLAY (START & GAME OVER) */
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; text-align: center; }
         .hidden { display: none !important; }
-        
-        .btn-style {
-            padding: 15px 35px;
-            background: #fff200;
-            border: none;
-            font-weight: bold;
-            font-size: 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin: 10px;
-        }
-        #confirm-btn { background: #00ffcc; color: #000; }
+        .btn-style { padding: 15px 45px; background: #fff200; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; font-size: 20px; color: #000; transition: 0.2s; }
+        .btn-style:active { transform: scale(0.95); }
+
+        /* CONTROLS SECTION */
+        #controls-wrapper { margin-top: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 40px; }
+        .jump-btn { width: 180px; height: 80px; background: #fff200; border: none; border-radius: 20px; font-size: 26px; font-weight: bold; cursor: pointer; box-shadow: 0 6px 0 #b3a700; }
+        .jump-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b3a700; }
     </style>
 </head>
 <body>
 
     <div class="ad-slot">
         <script type="text/javascript">
-            atOptions = {
-                'key' : '7f93a586b56b369c214c97bd39b9ec0d',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
+            atOptions = {'key' : 'ee84ecf900cce66cfa18e9eca3e20196','format' : 'iframe','height' : 60,'width' : 468,'params' : {}};
         </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/7f93a586b56b369c214c97bd39b9ec0d/invoke.js"></script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/ee84ecf900cce66cfa18e9eca3e20196/invoke.js"></script>
     </div>
 
-    <div id="game-container">
+    <div id="status-box">
+        <div id="log-text" style="color: #ff0055; font-weight: bold; margin-bottom: 5px;">🔴 System: Waiting for Ad Click</div>
+        <div id="timer-text" style="font-size: 18px; color: #fff;">Ads Page Time: 0s / 60s</div>
+    </div>
+
+    <button id="reward-btn" onclick="startAdProcess()">📺 WATCH AD FOR 20 COINS</button>
+
+    <div id="game-container" style="margin-top: 15px;">
         <div id="top-bar">
-            <div id="score">Score: 0</div>
-            <div id="analysis-report">Launch Clicks: 0</div>
+            <div id="score" style="color:#fff200; font-size: 20px; font-weight: bold;">Score: 0</div>
+            <div id="coin-display" style="color:#00ffcc; font-size: 20px; font-weight: bold;">💰 Coins: 0</div>
         </div>
-
         <canvas id="gameCanvas"></canvas>
-
+        
         <div id="overlay">
-            <div id="game-over-ad" class="ad-slot hidden">
-                </div>
-
-            <h1 id="title" style="color:#fff200">NEON DASH</h1>
-            <p id="msg">Game start karne ke liye button dabayein</p>
+            <div id="start-screen">
+                <h1 style="color:#fff200; font-size: 40px; margin: 0 0 10px 0;">NEON DASH</h1>
+                <p style="font-size: 18px; margin-bottom: 25px;">Entry Fee: 5 Coins 🪙</p>
+                <button class="btn-style" onclick="attemptStart()">START GAME</button>
+            </div>
             
-            <button id="start-btn" class="btn-style" onclick="showConfirmButton()">START GAME</button>
-            <button id="confirm-btn" class="btn-style hidden" onclick="finalizeStart()">CLICK TO LAUNCH 🚀</button>
+            <div id="game-over-screen" class="hidden">
+                <h1 style="color:#ff0055; font-size: 35px; margin: 0;">GAME OVER</h1>
+                <h2 id="final-score" style="color:#fff200; font-size: 50px; margin: 10px 0;">0</h2>
+                <button class="btn-style" onclick="resetToMenu()">MAIN MENU</button>
+            </div>
         </div>
     </div>
 
-    <div id="controls">
+    <div id="controls-wrapper">
         <button class="jump-btn" onmousedown="handleJump()" ontouchstart="handleJump()">JUMP</button>
+        
+        <div class="ad-slot">
+            <script type="text/javascript">
+                atOptions = {'key' : 'ee84ecf900cce66cfa18e9eca3e20196','format' : 'iframe','height' : 60,'width' : 468,'params' : {}};
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/ee84ecf900cce66cfa18e9eca3e20196/invoke.js"></script>
+        </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const overlay = document.getElementById('overlay');
-        const scoreEl = document.getElementById('score');
-        const reportEl = document.getElementById('analysis-report');
-        const gameOverAd = document.getElementById('game-over-ad');
+        // --- COIN & REWARD SYSTEM ---
+        const rewardBtn = document.getElementById('reward-btn');
+        const logText = document.getElementById('log-text');
+        const timerText = document.getElementById('timer-text');
+        const coinDisplay = document.getElementById('coin-display');
 
-        canvas.width = 800;
-        canvas.height = 400;
+        let coins = parseInt(localStorage.getItem('neonDashCoins')) || 20;
+        let adSeconds = 0;
+        let isProcessing = false;
+        let timerInterval;
 
-        let player = { x: 80, y: 340 - 50, w: 50, h: 50, dy: 0, jumpForce: 14, grounded: false };
-        let obstacles = [];
-        let score = 0;
-        let gameActive = false;
-        let launchClicks = 0; 
-        let speed = 7;
-        let gravity = 0.8;
-
-        function showConfirmButton() {
-            document.getElementById('start-btn').classList.add('hidden');
-            document.getElementById('confirm-btn').classList.remove('hidden');
-            document.getElementById('msg').innerText = "Ab Launch button par click karein!";
+        function updateCoinUI() {
+            coinDisplay.innerText = `💰 Coins: ${coins}`;
+            localStorage.setItem('neonDashCoins', coins);
         }
+        updateCoinUI();
 
-        function finalizeStart() {
-            launchClicks++; 
-            reportEl.innerText = `Launch Clicks: ${launchClicks}`;
-            overlay.classList.add('hidden');
-            gameOverAd.classList.add('hidden'); // Hide ad when game starts
-            resetGame();
-            gameActive = true;
-            animate();
-        }
+        function startAdProcess() {
+            isProcessing = true;
+            rewardBtn.disabled = true;
+            rewardBtn.classList.remove('resume-mode');
+            rewardBtn.innerText = "⏳ Redirecting to Ad...";
+            logText.innerText = "🟡 Status: Tracking View Time...";
+            logText.style.color = "#ffcc00";
 
-        function resetGame() {
-            score = 0; speed = 7; obstacles = [];
-            player.y = 340 - player.h;
-            player.dy = 0;
-            scoreEl.innerText = `Score: 0`;
-        }
+            window.open('https://www.profitablecpmratenetwork.com/pm1id7s3?key=c2352045184b6e9f677eb5622e9c7f8e', '_blank');
 
-        function handleJump() {
-            if (player.grounded && gameActive) {
-                player.dy = -player.jumpForce;
-                player.grounded = false;
+            if(!timerInterval) {
+                timerInterval = setInterval(trackTime, 1000);
             }
         }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') handleJump();
-        });
+        function trackTime() {
+            if (!isProcessing) return;
+            if (document.visibilityState === 'hidden') {
+                adSeconds++;
+            } else {
+                if (adSeconds < 60) {
+                    logText.innerText = "⚠️ Paused! Return to Ad Page.";
+                    logText.style.color = "#ff4444";
+                    rewardBtn.disabled = false;
+                    rewardBtn.innerText = "▶️ RESUME AD (" + (60 - adSeconds) + "s Left)";
+                    rewardBtn.classList.add('resume-mode');
+                }
+            }
+            timerText.innerText = `Ads Page Time: ${adSeconds}s / 60s`;
+            if (adSeconds >= 60) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                logText.innerText = "✅ Time Complete! Claim Now.";
+                logText.style.color = "#00ffcc";
+                rewardBtn.disabled = false;
+                rewardBtn.innerText = "🎁 CLAIM 20 COINS";
+                rewardBtn.style.background = "#ff0055";
+                rewardBtn.style.color = "white";
+                rewardBtn.classList.remove('resume-mode');
+                rewardBtn.onclick = claimCoins;
+            }
+        }
+
+        function claimCoins() {
+            coins += 20;
+            updateCoinUI();
+            isProcessing = false;
+            adSeconds = 0;
+            alert("Success! 20 Coins Added.");
+            rewardBtn.innerText = "📺 WATCH AD FOR 20 COINS";
+            rewardBtn.style.background = "#00ffcc";
+            rewardBtn.style.color = "#000";
+            rewardBtn.onclick = startAdProcess;
+            logText.innerText = "🔴 System: Waiting for Ad Click";
+            logText.style.color = "#ff0055";
+            timerText.innerText = "Ads Page Time: 0s / 60s";
+        }
+
+        // --- GAME ENGINE ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 800; canvas.height = 400;
+        let gameActive = false, score = 0, speed = 7;
+        let player = { x: 80, y: 290, w: 50, h: 50, dy: 0, grounded: false };
+        let obstacles = [];
+
+        function attemptStart() {
+            if (coins >= 5) { coins -= 5; updateCoinUI(); startGame(); }
+            else { alert("You need 5 coins to start!"); }
+        }
+
+        function startGame() {
+            document.getElementById('overlay').classList.add('hidden');
+            score = 0; speed = 7; obstacles = []; gameActive = true; animate();
+        }
+
+        function resetToMenu() {
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('overlay').classList.remove('hidden');
+        }
+
+        function handleJump() { if (player.grounded && gameActive) { player.dy = -11.3; player.grounded = false; } }
 
         function animate() {
             if (!gameActive) return;
+            ctx.fillStyle = "black"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#222"; ctx.fillRect(0, 340, canvas.width, 60);
+            ctx.fillStyle = "#fff200"; ctx.fillRect(0, 340, canvas.width, 3);
+            
+            player.dy += 0.8; player.y += player.dy;
+            if (player.y > 290) { player.y = 290; player.dy = 0; player.grounded = true; }
+            ctx.font = "34px Arial"; ctx.fillText("🚀", player.x, player.y + 35);
 
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = "#222";
-            ctx.fillRect(0, 340, canvas.width, 60);
-            ctx.fillStyle = "#fff200";
-            ctx.fillRect(0, 340, canvas.width, 3);
-
-            player.dy += gravity;
-            player.y += player.dy;
-
-            if (player.y + player.h > 340) {
-                player.y = 340 - player.h;
-                player.dy = 0;
-                player.grounded = true;
-            }
-
-            ctx.fillStyle = "#fff200";
-            ctx.fillRect(player.x, player.y, player.w, player.h);
-            ctx.font = "38px Arial";
-            ctx.fillText("🚀", player.x + 4, player.y + 40);
-
-            if (Math.random() < 0.018) {
-                obstacles.push({ x: canvas.width, y: 340 - 50, w: 35, h: 50 });
-            }
-
+            if (Math.random() < 0.018) obstacles.push({ x: canvas.width, y: 290 });
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 obstacles[i].x -= speed;
-                ctx.fillStyle = "#ff0055";
-                ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].w, obstacles[i].h);
-
-                if (player.x < obstacles[i].x + obstacles[i].w &&
-                    player.x + player.w > obstacles[i].x &&
-                    player.y < obstacles[i].y + obstacles[i].h &&
-                    player.y + player.h > obstacles[i].y) {
-                    gameOver();
+                ctx.fillStyle = "#ff0055"; ctx.fillRect(obstacles[i].x, obstacles[i].y, 30, 50);
+                if (player.x < obstacles[i].x + 30 && player.x + 40 > obstacles[i].x && player.y < obstacles[i].y + 50 && player.y + 40 > obstacles[i].y) {
+                    gameActive = false;
+                    document.getElementById('final-score').innerText = score;
+                    document.getElementById('overlay').classList.remove('hidden');
+                    document.getElementById('game-over-screen').classList.remove('hidden');
+                    document.getElementById('start-screen').classList.add('hidden');
                 }
-
-                if (obstacles[i].x + obstacles[i].w < 0) {
-                    obstacles.splice(i, 1);
-                    score++;
-                    scoreEl.innerText = `Score: ${score}`;
-                    speed += 0.1;
-                }
+                if (obstacles[i].x < -30) { obstacles.splice(i, 1); score++; document.getElementById('score').innerText = "Score: " + score; speed += 0.08; }
             }
             requestAnimationFrame(animate);
-        }
-
-        function gameOver() {
-            gameActive = false;
-            overlay.classList.remove('hidden');
-            gameOverAd.classList.remove('hidden'); // Show ad on Game Over
-            document.getElementById('start-btn').classList.remove('hidden');
-            document.getElementById('confirm-btn').classList.add('hidden');
-            document.getElementById('title').innerText = "GAME OVER! 💀";
-            document.getElementById('msg').innerText = "Score: " + score;
         }
     </script>
 </body>
